@@ -4,6 +4,19 @@ const loadCatagories = () => {
         .then(data => displayCategories(data.categories))
         .catch(err => console.log(err))
 }
+const displayCategories = (data) => {
+    const categoryContainer = document.getElementById('categories');
+    data.forEach(item => {
+        console.log(item);
+        const buttonContainer = document.createElement('div');
+        buttonContainer.innerHTML = `
+        <button id="btn-${item.category_id}" onclick="loadCategoriesVideo(${item.category_id})" class="btn category-btn"> ${item.category}
+        </button>
+        `
+
+        categoryContainer.appendChild(buttonContainer);
+    })
+}
 const getTimeString = (time) => {
     const hour = parseInt(time / 3600);
     let remainingSeconds = time % 3600;
@@ -11,8 +24,8 @@ const getTimeString = (time) => {
     remainingSeconds = remainingSeconds % 60;
     return `${hour} hour ${minute} minute ${remainingSeconds} second ago`;
 }
-const loadVideos = () => {
-    fetch('https://openapi.programming-hero.com/api/phero-tube/videos')
+const loadVideos = (searchText = "") => {
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchText}`)
         .then(res => res.json())
         .then(data => displayVideos(data.videos))
         .catch(err => console.log(err))
@@ -73,12 +86,29 @@ const displayVideos = (videos) => {
      </div>
      </div>
      <div>
-
+        <p><button onclick="loadDetails('${videos.video_id}')" class="btn-sm btn btn-error">Details</button></p>
      </div>
   </div>
         `
         videoContainer.appendChild(card);
     });
+}
+const loadDetails = async (videoId) => {
+    console.log(videoId);
+    const uri = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`;
+    const res = await fetch(uri);
+    const data = await res.json();
+    displayDetails(data.video);
+}
+const displayDetails = (video) => {
+    console.log(video);
+    const detailContainer = document.getElementById('modal-content');
+    detailContainer.innerHTML = `
+    <img src=${video.thumbnail}/>
+    <p>${video.description}</p>
+    `
+
+    document.getElementById('customModal').showModal();
 }
 const removeActiveClass = () => {
     const buttons = document.getElementsByClassName('category-btn');
@@ -87,19 +117,9 @@ const removeActiveClass = () => {
         btn.classList.remove('active');
     }
 }
-const displayCategories = (data) => {
-    const categoryContainer = document.getElementById('categories');
-    data.forEach(item => {
-        console.log(item);
-        const buttonContainer = document.createElement('div');
-        buttonContainer.innerHTML = `
-        <button id="btn-${item.category_id}" onclick="loadCategoriesVideo(${item.category_id})" class="btn category-btn"> ${item.category}
-        </button>
-        `
 
-        categoryContainer.appendChild(buttonContainer);
-    })
-}
-
+document.getElementById('search-input').addEventListener("keyup", (e) => {
+    loadVideos(e.target.value);
+})
 loadCatagories();
 loadVideos();
