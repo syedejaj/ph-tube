@@ -17,20 +17,6 @@ const displayCategories = (data) => {
         categoryContainer.appendChild(buttonContainer);
     })
 }
-const getTimeString = (time) => {
-    const hour = parseInt(time / 3600);
-    let remainingSeconds = time % 3600;
-    const minute = parseInt(remainingSeconds / 60);
-    remainingSeconds = remainingSeconds % 60;
-    return `${hour} hour ${minute} minute ${remainingSeconds} second ago`;
-}
-const loadVideos = (searchText = "") => {
-    fetch(`https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchText}`)
-        .then(res => res.json())
-        .then(data => displayVideos(data.videos))
-        .catch(err => console.log(err))
-}
-
 const loadCategoriesVideo = (id) => {
     fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
         .then(res => res.json())
@@ -73,7 +59,7 @@ const displayVideos = (videos) => {
             }
       
   </figure>
-  <div class="px-0 py-2 flex gap-2">
+  <div class="px-0 py-2 flex gap-2 justify-between items-center">
      <div>
      <img class="w-10 h-10 rounded-full object-cover" src="${videos.authors[0].profile_picture}" />
      </div>
@@ -110,6 +96,24 @@ const displayDetails = (video) => {
 
     document.getElementById('customModal').showModal();
 }
+const getTimeString = (time) => {
+    const hour = parseInt(time / 3600);
+    let remainingSeconds = time % 3600;
+    const minute = parseInt(remainingSeconds / 60);
+    remainingSeconds = remainingSeconds % 60;
+    return `${hour} hour ${minute} minute ${remainingSeconds} second ago`;
+}
+const loadVideos = (searchText = "") => {
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchText}`)
+        .then(res => res.json())
+        .then(data => displayVideos(data.videos))
+        .catch(err => console.log(err))
+}
+
+
+
+
+
 const removeActiveClass = () => {
     const buttons = document.getElementsByClassName('category-btn');
     console.log(buttons);
